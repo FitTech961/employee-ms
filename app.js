@@ -4,6 +4,11 @@ const express = require('express');
 const errorHandler = require('./src/errors/errorHandler');
 const ErrStrategies = require('./src/errors/strategies');
 const { logger } = require('./src/utils/logger');
+const db = require('./src/db');
+
+(async () => {
+  await db.connect();
+})();
 
 dotenv.config({ silent: true });
 
