@@ -1,18 +1,18 @@
 const { isEmpty } = require('lodash');
 const { makeError } = require('../../errors/utils');
 const { logger } = require('../../utils/logger');
-const { addEmployeeService } = require('../service');
+const { deleteEmployeeService } = require('../service');
 
 // WIP
-async function addEmployee(db, req, res) {
-  const { body } = req;
+async function deleteEmployee(db, req, res) {
+  const { id } = req.query;
   try {
-    logger.info('Trying to add employee.');
-    const result = await addEmployeeService(db, body);
-    logger.info('Successfully added employee.');
+    logger.info('Trying to delete employee.');
+    await deleteEmployeeService(db, id);
+    logger.info('Successfully deleted employee.');
 
     res.statusCode = 201;
-    res.send(result);
+    res.send();
   } catch (error) {
     logger.error(error);
     const errorStatus = error.status || 500;
@@ -24,5 +24,5 @@ async function addEmployee(db, req, res) {
 }
 
 module.exports = {
-  addEmployee,
+  deleteEmployee,
 };
