@@ -1,15 +1,15 @@
 const { isEmpty } = require('lodash');
+
 const { makeError } = require('../../errors/utils');
 const { logger } = require('../../utils/logger');
-const { addEmployeeService } = require('../service');
+const { updateEmployeeService } = require('../service');
 
-// WIP
-async function addEmployee(db, req, res) {
-  const { body } = req;
+async function updateEmployee(db, req, res) {
+  const { body, query } = req;
   try {
-    logger.info('Trying to add employee.');
-    const result = await addEmployeeService(db, body);
-    logger.info('Successfully added employee.');
+    logger.info('Trying to update employee.');
+    const result = await updateEmployeeService(db, body, query);
+    logger.info('Successfully updated employee.');
 
     res.statusCode = 201;
     res.send(result);
@@ -24,5 +24,5 @@ async function addEmployee(db, req, res) {
 }
 
 module.exports = {
-  addEmployee,
+  updateEmployee,
 };
