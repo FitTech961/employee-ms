@@ -21,8 +21,11 @@ async function addEmployee(db, body) {
 
   const collection = await db.collection('employees');
 
-  const exist = await find(collection, { email, phoneNumber });
-  if (!isEmpty(exist)) throw makeError('User already exist', 500);
+  const existEmail = await find(collection, { email });
+  if (!isEmpty(existEmail)) throw makeError('User email already exist', 500);
+
+  const existMobile = await find(collection, { phoneNumber });
+  if (!isEmpty(existMobile)) throw makeError('User mobile already exist', 500);
 
   const result = await insert(collection, employee);
 

@@ -43,7 +43,7 @@ async function updateEmployee(db, body, query) {
     ) {
       let exist = [];
       const searchBy = {};
-      searchBy.email = query.email.trim().toLowerCase();
+      searchBy.email = employee.email.trim().toLowerCase();
 
       exist = await find(collection, searchBy);
       if (!isEmpty(exist)) {

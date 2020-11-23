@@ -12,10 +12,16 @@ const {
   updateEmployeeSchema,
 } = require('../validation/schemas/employeeSchemas');
 const { bodyValidation } = require('../middlewares/verifyBody');
+const { verifyJwt } = require('../auth/verifyJwt');
 
-// WIP
 function employeeRoute(router, db) {
-  router.post('/', validate(addEmployeeSchema), bodyValidation, partial(addEmployee, db));
+  router.post(
+    '/',
+    validate(addEmployeeSchema),
+    bodyValidation,
+    verifyJwt,
+    partial(addEmployee, db),
+  );
 
   /** Get all employees if no query params are sent
    *  Get employee by id by sending id in query param
@@ -23,9 +29,15 @@ function employeeRoute(router, db) {
    */
   router.get('/', partial(getEmployees, db));
 
-  router.patch('/', validate(updateEmployeeSchema), bodyValidation, partial(updateEmployee, db));
+  router.patch(
+    '/',
+    validate(updateEmployeeSchema),
+    bodyValidation,
+    verifyJwt,
+    partial(updateEmployee, db),
+  );
 
-  router.delete('/', partial(deleteEmployee, db));
+  router.delete('/', verifyJwt, partial(deleteEmployee, db));
 
   return router;
 }
