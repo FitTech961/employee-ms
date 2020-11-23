@@ -40,6 +40,7 @@ async function getEmployees(db, query) {
       });
     }
 
+    /** query is equal to {} if no query is passed it will get all employees */
     result = await find(collection, query);
   } else {
     result = await findById(collection, query.id);
