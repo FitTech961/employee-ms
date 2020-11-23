@@ -6,6 +6,7 @@ const ErrStrategies = require('./src/errors/strategies');
 const { logger } = require('./src/utils/logger');
 const authenticatedRouter = require('./src/routers/authenticated');
 const employeeRoute = require('./src/routes/employee');
+const loginRoute = require('./src/routes/login');
 const db = require('./src/db');
 
 (async () => {
@@ -26,6 +27,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/employee', employeeRoute(authenticatedRouter(), db));
+app.use('/login', loginRoute(authenticatedRouter(), db));
 
 appErrorHandler(app);
 

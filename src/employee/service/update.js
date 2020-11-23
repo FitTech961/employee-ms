@@ -18,21 +18,6 @@ async function updateEmployee(db, body, query) {
 
   const collection = await db.collection('employees');
 
-  /** Checking if email or password already exist */
-  if (!isEmpty(employee.email) || !isEmpty(employee.phoneNumber)) {
-    const searchBy = {};
-
-    if (!isEmpty(employee.email)) searchBy.email = employee.email;
-    if (!isEmpty(employee.phoneNumber)) searchBy.phoneNumber = employee.phoneNumber;
-
-    const exist = await find(collection, searchBy);
-
-    /** Not allowed to update if email or password exist */
-    if (!isEmpty(exist)) {
-      throw makeError('Problem occured, email or phone number already exist.', 500);
-    }
-  }
-
   if (isEmpty(query.id)) {
     /** You can search for an employee using email or phoneNumber since both are unique */
     const validSearchQueries = ['email', 'phoneNumber'];
@@ -49,6 +34,21 @@ async function updateEmployee(db, body, query) {
           }
         });
       });
+    }
+
+    /** Checking that the new modified email doesn't already exist */
+    if (
+      !isEmpty(query.email) &&
+      query.email.trim().toLowerCase() !== employee.email.trim().toLowerCase()
+    ) {
+      let exist = [];
+      const searchBy = {};
+      searchBy.email = query.email.trim().toLowerCase();
+
+      exist = await find(collection, searchBy);
+      if (!isEmpty(exist)) {
+        throw makeError('Problem occured, email  already exist.', 500);
+      }
     }
 
     await update(collection, query, employee);
