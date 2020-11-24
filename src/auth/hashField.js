@@ -4,10 +4,10 @@ const dotenv = require('dotenv');
 
 dotenv.config({ silent: true });
 
-const { privateKey } = process.env;
+const { PRIVATE_KEY } = process.env;
 
 function hashField(body) {
-  const hash = Base64.stringify(hmacSHA512(body.trim(), privateKey));
+  const hash = Base64.stringify(hmacSHA512(body.trim(), PRIVATE_KEY));
 
   return hash;
 }

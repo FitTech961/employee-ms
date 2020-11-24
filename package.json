@@ -4,7 +4,7 @@
   "description": "Microservice to manage employees",
   "main": "app.js",
   "scripts": {
-    "test": "mocha --reporter spec",
+    "test": "./node_modules/.bin/mocha test --recursive -t 10000 --exit",
     "start": "node app.js",
     "start:dev": "nodemon app.js"
   },
@@ -21,6 +21,7 @@
     "joi": "^17.3.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
+    "mocha": "5.2.0",
     "mongodb": "^3.6.3",
     "winston": "^3.3.3"
   },
@@ -34,7 +35,6 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "7.21.5",
     "eslint-plugin-react-hooks": "4.0.0",
-    "mocha": "^8.2.1",
     "nodemon": "^2.0.6",
     "prettier": "^2.1.2"
   }

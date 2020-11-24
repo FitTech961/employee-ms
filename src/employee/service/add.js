@@ -5,17 +5,17 @@ const { makeError } = require('../../errors/utils');
 
 // WIP
 async function addEmployee(db, body) {
-  if (isEmpty(db)) throw makeError('No db connection', 500);
-
   let employee;
 
   if (isEmpty(body) || isNull(body)) {
-    throw makeError('Problem adding a user', 500);
+    throw makeError('Problem adding an employee', 500);
   } else {
     employee = { ...body };
     employee.created_date = new Date();
     employee.updated_date = new Date();
   }
+
+  if (isEmpty(db)) throw makeError('No db connection', 500);
 
   const { email, phoneNumber } = employee;
 
