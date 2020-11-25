@@ -8,11 +8,11 @@ async function updateEmployee(db, req, res) {
   const { body, query } = req;
   try {
     logger.info('Trying to update employee.');
-    const result = await updateEmployeeService(db, body, query);
+    await updateEmployeeService(db, body, query);
     logger.info('Successfully updated employee.');
 
     res.statusCode = 201;
-    res.send(result);
+    res.send();
   } catch (error) {
     logger.error(error);
     const errorStatus = error.status || 500;

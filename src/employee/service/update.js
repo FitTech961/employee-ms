@@ -3,7 +3,6 @@ const { isEmpty, isNull } = require('lodash');
 
 const { update, updateById, find } = require('../../db/common_db');
 const { makeError } = require('../../errors/utils');
-const { getEmployees } = require('./get');
 
 async function updateEmployee(db, body, query) {
   if (isEmpty(db)) throw makeError('No db connection', 500);
@@ -30,7 +29,8 @@ async function updateEmployee(db, body, query) {
       /** if employee email is empty no need for further checking we can directly update */
       await updateById(collection, id, employee);
     } else {
-      const searchBy = email.employee;
+      const searchBy = {};
+      searchBy.email = employee.email;
       const exist = await find(collection, searchBy);
       if (!isEmpty(exist)) {
         throw makeError('Problem occured, email  already exist.', 400);
@@ -57,10 +57,7 @@ async function updateEmployee(db, body, query) {
     }
   }
 
-  const result = await getEmployees(db, query);
-
   /** Search by Id return JSON object, and by query returns an array of object */
-  return result[0] ? result[0] : result;
 }
 
 module.exports = {
