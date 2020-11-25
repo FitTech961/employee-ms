@@ -1,3 +1,4 @@
+/* eslint-disable no-lonely-if */
 const { isEmpty, isNull } = require('lodash');
 
 const { update, updateById, find } = require('../../db/common_db');
@@ -7,10 +8,15 @@ const { getEmployees } = require('./get');
 async function updateEmployee(db, body, query) {
   if (isEmpty(db)) throw makeError('No db connection', 500);
 
+  const { email, id } = query;
+  if (isEmpty(id) && isEmpty(email)) {
+    throw makeError('Please provide a search query email or id ', 400);
+  }
+
   let employee;
 
   if (isEmpty(body) || isNull(body)) {
-    throw makeError('Empty body', 500);
+    throw makeError('Empty body', 400);
   } else {
     employee = { ...body };
     employee.updated_date = new Date();
@@ -18,42 +24,37 @@ async function updateEmployee(db, body, query) {
 
   const collection = await db.collection('employees');
 
-  if (isEmpty(query.id)) {
-    /** You can search for an employee using email or phoneNumber since both are unique */
-    const validSearchQueries = ['email', 'phoneNumber'];
-
-    if (!isEmpty(query)) {
-      Object.keys(query).forEach((k) => {
-        let count = 0;
-        validSearchQueries.forEach((search) => {
-          if (k !== search) {
-            count += 1;
-          }
-          if (count === validSearchQueries.length) {
-            throw makeError(`${k} is not a valid search query `, 400);
-          }
-        });
-      });
-    }
-
-    /** Checking that the new modified email doesn't already exist */
-    if (
-      !isEmpty(query.email) &&
-      query.email.trim().toLowerCase() !== employee.email.trim().toLowerCase()
-    ) {
-      let exist = [];
-      const searchBy = {};
-      searchBy.email = employee.email.trim().toLowerCase();
-
-      exist = await find(collection, searchBy);
+  /** if id not empty search by id */
+  if (!isEmpty(id)) {
+    if (isEmpty(employee.email)) {
+      /** if employee email is empty no need for further checking we can directly update */
+      await updateById(collection, id, employee);
+    } else {
+      const searchBy = email.employee;
+      const exist = await find(collection, searchBy);
       if (!isEmpty(exist)) {
-        throw makeError('Problem occured, email  already exist.', 500);
+        throw makeError('Problem occured, email  already exist.', 400);
       }
-    }
 
-    await update(collection, query, employee);
+      /** If no bad request occured update by id */
+      await updateById(collection, id, employee);
+    }
   } else {
-    await updateById(collection, query.id, employee);
+    /** if id is empty search by email */
+    if (!isEmpty(employee.email)) {
+      if (employee.email.trim().toLowerCase() === email.trim().toLowerCase()) {
+        await update(collection, { email }, employee);
+      } else {
+        const searchBy = email.employee;
+        const exist = await find(collection, searchBy);
+        if (!isEmpty(exist)) {
+          throw makeError('Problem occured, email  already exist.', 400);
+        }
+        await update(collection, { email }, employee);
+      }
+    } else {
+      await update(collection, { email }, employee);
+    }
   }
 
   const result = await getEmployees(db, query);
